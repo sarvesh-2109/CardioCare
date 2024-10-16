@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title if title else "CardioCare" }}</title>
+    <style>
+        /* Previous styles remain the same except for header-related ones */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            background: #35424a;
+            color: #ffffff;
+            padding: 15px 30px;
+        }
+        .nav-left {
+            flex: 1;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+        .nav a {
+            color: #ffffff;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+        .nav a:first-child {
+            margin-left: 0;
+        }
+        .nav-left a {
+            margin-right: 20px;
+        }
+        .main-container {
+            flex: 1;
+            padding: 20px;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 0 20px;
+            margin-top: 20px; /* Added some top margin since we removed the header */
+        }
+        .form-group {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .form-group.full-width {
+            grid-column: span 3;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .submit-container {
+            grid-column: span 3;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: #35424a;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 200px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .prediction-container {
+            grid-column: span 3;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-left">
+            {% block navbar_left %}
+            {% if current_page == 'diagnose' %}
+            <a href="{{ url_for('home') }}">Home</a>
+            {% elif current_page == 'result' %}
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('diagnose') }}">Diagnosis</a>
+            {% else %}
+            <a href="{{ url_for('diagnose') }}">Diagnosis</a>
+            {% endif %}
+            {% endblock %}
+        </div>
+        <div class="nav-right">
+            {% if session['user_id'] %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="main-container">
+        <form action="{{ url_for('diagnose') }}" method="post">
+            <div class="form-container">
+                <!-- Rest of the form content remains exactly the same -->
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Gender (sex):</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="sex" value="0" required>
+                            Female
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="sex" value="1">
+                            Male
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ... Rest of the form groups remain exactly the same ... -->
+
+                <div class="form-group">
+                    <label for="trestbps">Resting blood pressure (mm Hg):</label>
+                    <input type="number" id="trestbps" name="trestbps" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Chest pain type (cp):</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="cp" value="0" required>
+                            Typical angina
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cp" value="1">
+                            Atypical angina
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cp" value="2">
+                            Non-anginal pain
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="cp" value="3">
+                            Asymptomatic
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="chol">Serum cholesterol (mg/dl):</label>
+                    <input type="number" id="chol" name="chol" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="thalach">Maximum heart rate:</label>
+                    <input type="number" id="thalach" name="thalach" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Fasting blood sugar > 120 mg/dl:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="fbs" value="0" required>
+                            No
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="fbs" value="1">
+                            Yes
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Exercise induced angina:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="exang" value="0" required>
+                            No
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="exang" value="1">
+                            Yes
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="oldpeak">ST depression:</label>
+                    <input type="number" step="0.1" id="oldpeak" name="oldpeak" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Resting ECG results:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="restecg" value="0" required>
+                            Normal
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="restecg" value="1">
+                            ST-T abnormal
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="restecg" value="2">
+                            LV hypertrophy
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Slope of peak exercise ST:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="slope" value="0" required>
+                            Upsloping
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="slope" value="1">
+                            Flat
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="slope" value="2">
+                            Downsloping
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Number of vessels colored:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="ca" value="0" required>
+                            0
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="ca" value="1">
+                            1
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="ca" value="2">
+                            2
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="ca" value="3">
+                            3
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Thalassemia:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="thal" value="1" required>
+                            Normal
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="thal" value="2">
+                            Fixed defect
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="thal" value="3">
+                            Reversible defect
+                        </label>
+                    </div>
+                </div>
+
+                <div class="submit-container">
+                    <button type="submit">DIAGNOSE</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</body>
+</html>

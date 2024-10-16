@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="data-section">
+        <h2>Diagnosis Data</h2>
+        <ol>
+            <li><strong>Age:</strong> {{ form_data.age }}</li>
+            <li><strong>Gender (sex):</strong> {{ "Female" if form_data.sex == 0 else "Male" }}</li>
+            <li><strong>Chest pain type (cp):</strong>
+                {% if form_data.cp == 0 %}Typical angina
+                {% elif form_data.cp == 1 %}Atypical angina
+                {% elif form_data.cp == 2 %}Non-anginal pain
+                {% elif form_data.cp == 3 %}Asymptomatic
+                {% endif %}
+            </li>
+            <li><strong>Resting blood pressure:</strong> {{ form_data.trestbps }} mm Hg</li>
+            <li><strong>Serum cholesterol:</strong> {{ form_data.chol }} mg/dl</li>
+            <li><strong>Fasting blood sugar > 120 mg/dl:</strong> {{ "Yes" if form_data.fbs == 1 else "No" }}</li>
+            <li><strong>Resting ECG results:</strong>
+                {% if form_data.restecg == 0 %}Normal
+                {% elif form_data.restecg == 1 %}Having ST-T wave abnormality
+                {% elif form_data.restecg == 2 %}Showing probable or definite left ventricular hypertrophy
+                {% endif %}
+            </li>
+            <li><strong>Maximum heart rate:</strong> {{ form_data.thalach }} BPM</li>
+            <li><strong>Exercise induced angina:</strong> {{ "Yes" if form_data.exang == 1 else "No" }}</li>
+            <li><strong>ST depression:</strong> {{ form_data.oldpeak }}</li>
+            <li><strong>Slope of peak exercise ST:</strong>
+                {% if form_data.slope == 0 %}Upsloping
+                {% elif form_data.slope == 1 %}Flat
+                {% elif form_data.slope == 2 %}Downsloping
+                {% endif %}
+            </li>
+            <li><strong>Number of vessels colored:</strong> {{ form_data.ca }}</li>
+            <li><strong>Thalassemia:</strong>
+                {% if form_data.thal == 1 %}Normal
+                {% elif form_data.thal == 2 %}Fixed defect
+                {% elif form_data.thal == 3 %}Reversible defect
+                {% endif %}
+            </li>
+        </ol>
+    </div>
+    <div class="result-section">
+        <p><strong>Prediction:</strong> <span class="{% if result.prediction %}positive{% else %}negative{% endif %}">
+            {% if result.prediction %}Positive{% else %}Negative{% endif %}
+        </span></p>
+        <p><strong>Probability:</strong> {{ "%.2f"|format(result.probability) }}%</p>
+        <p>The model predicts that the user is {% if not result.prediction %}not {% endif %}at risk of heart disease with a probability of {{ "%.2f"|format(100 - result.probability if not result.prediction else result.probability) }}%.</p>
+    </div>
+
+<style>
+    .result-container {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .data-section, .result-section {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    .data-section h2 {
+        margin-top: 0;
+        color: #333;
+    }
+    .data-section ol {
+        padding-left: 20px;
+        margin-bottom: 0;
+    }
+    .data-section li {
+        margin-bottom: 5px;
+    }
+    .result-section p {
+        margin: 10px 0;
+    }
+    .positive {
+        color: red;
+    }
+    .negative {
+        color: green;
+    }
+    .new-diagnosis-btn {
+        display: inline-block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    .new-diagnosis-btn:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}

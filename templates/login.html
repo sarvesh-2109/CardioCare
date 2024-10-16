@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Login</h2>
+<style>
+    .center-text {
+        text-align: center;
+        margin: 10px 0; /* Optional: Adds some space above and below the text */
+    }
+</style>
+<form method="POST">
+    <label for="identifier">Patient ID or Email</label>
+    <input type="text" id="identifier" name="identifier" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
+
+<div class="guest-login">
+    <p class="center-text"><b>OR</b></p>
+    <form action="{{ url_for('guest_login') }}" method="POST">
+        <button type="submit" class="guest-button">Continue as Guest</button>
+    </form>
+</div>
+
+<p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a>.</p>
+{% endblock %}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title if title else "CardioCare" }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            overflow: hidden;
+            padding: 30px;
+            background: #fff;
+            margin-top: 50px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between; /* Space between the left and right sections */
+            background: #35424a;
+            color: #ffffff;
+            padding: 15px;
+        }
+        .nav-left {
+            flex: 1; /* Allow this section to grow */
+        }
+        .nav-right {
+            display: flex; /* Display the right section in a flex container */
+            align-items: center; /* Center the items vertically */
+        }
+        .nav a {
+            color: #ffffff;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+        .nav a:first-child {
+            margin-left: 0; /* Remove left margin for the first link */
+        }
+        .nav-left a {
+            margin-right: 20px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+        .success {
+            color: green;
+            margin-bottom: 15px;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px 0;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #35424a;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        h2 {
+            text-align: center;
+            color: #35424a;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="nav-left">
+            {% block navbar_left %}
+                {% if current_page == 'diagnose' %}
+                    <a href="{{ url_for('home') }}">Home</a>
+                {% elif current_page == 'result' %}
+                    <a href="{{ url_for('home') }}">Home</a>
+                    <a href="{{ url_for('diagnose') }}">Diagnosis</a>
+                {% else %}
+                    <a href="{{ url_for('diagnose') }}">Diagnosis</a>
+                {% endif %}
+            {% endblock %}
+        </div>
+        <div class="nav-right">
+            {% if session['user_id'] %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
